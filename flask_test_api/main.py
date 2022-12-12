@@ -17,7 +17,6 @@ def index():
 
 @app.route('/users', methods=['POST'])
 def add_user():
-    print("хйу")
     #for num in range(len(data)):
     #    if request.get_json()['id'] == data[num]['id']:
     #        print("ID number is busy")
