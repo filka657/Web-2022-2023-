@@ -28,18 +28,11 @@ def page_not_found(e):
     return render_template('404.html'), 404
 
 
-# def sort_id():
-#     sql = 'SELECT * FROM users ORDER BY user_id ASC'
-#     cursor.execute(sql)
-#     conn.commit()
-#     return get_users
-
-
 @app.route('/users', methods=['GET'])
 def get_users():
     # select all sorted by user_id
-    sql = 'SELECT * FROM %s ORDER BY user_id ASC;'
-    cursor.execute(sql % TABLE_NAME)
+    sql = 'SELECT * FROM users ORDER BY user_id ASC;'
+    cursor.execute(sql)
     data = cursor.fetchall()
     # convert to list of lists
     data = list(map(list, data))
@@ -47,16 +40,13 @@ def get_users():
     for cor, val in enumerate(data):
         data[cor] = dict(zip(COLUMNS, data[cor]))
     print(data)
-    # Return sorted by user_id data
     return jsonify(data)
-    #return jsonify(sorted(data, key=lambda index: index['user_id']))
 
 
 @app.route('/users/<user_id>', methods=['GET'])
 def get_user(user_id):
     sql = 'SELECT * FROM users WHERE user_id=%s;'
-    cursor.execute(sql, (str(user_id), ))
-    #cursor.execute(sql, (str(table_name), str(user_id),) )
+    cursor.execute(sql, (str(user_id),))
     data = cursor.fetchall()
     # convert to list of lists
     data = list(map(list, data))
