@@ -12,8 +12,8 @@ conn = psycopg2.connect(
     user="postgres",
     password="12345",
 )
-table_name = "users"
-columns = ['user_id', 'user_name', 'user_surname']
+TABLE_NAME = "users"
+COLUMNS = ['user_id', 'user_name', 'user_surname']
 cursor = conn.cursor()
 success_message = {'success': True}
 
@@ -31,19 +31,19 @@ def page_not_found(e):
 @app.route('/users', methods=['GET'])
 def get_users():
     sql = 'SELECT * FROM %s;'
-    cursor.execute(sql % table_name)
+    cursor.execute(sql % TABLE_NAME)
     data = cursor.fetchall()
     # convert to list of lists
     data = list(map(list, data))
     # convert to list of dicts
     for cor, val in enumerate(data):
-        data[cor] = dict(zip(columns, data[cor]))
+        data[cor] = dict(zip(COLUMNS, data[cor]))
     print(data)
-    return jsonify(data)
+    # Return sorted by user_id data
+    return jsonify(sorted(data, key=lambda index: index['user_id']))
 
 
-# new method GET
-@app.route('/users/<user_id>', methods=['GET', 'PUT'])
+@app.route('/users/<user_id>', methods=['GET'])
 def get_user(user_id):
     sql = 'SELECT * FROM users WHERE user_id=%s;'
     cursor.execute(sql, (str(user_id), ))
@@ -53,7 +53,7 @@ def get_user(user_id):
     data = list(map(list, data))
     # convert to list of dicts
     for cor, val in enumerate(data):
-        data[cor] = dict(zip(columns, data[cor]))
+        data[cor] = dict(zip(COLUMNS, data[cor]))
     print(data)
     if not data:
         return user_not_found(404)
@@ -69,12 +69,7 @@ def add_user():
     cursor.execute(sql, (name, surname))
     conn.commit()
     print(success_message)
-    #for num in range(len(data)):
-    #    if request.get_json()['id'] == data[num]['id']:
-    #        print("ID number is busy")
-    #    else:
-    # data.append(request.get_json())
-    return jsonify(data) # jsonify(data)
+    return jsonify(data)
 
 
 @app.route('/users', methods=['PUT'])
@@ -85,7 +80,6 @@ def update_user():
     surname = request.json['user_surname']
     cursor.execute(sql, (name, surname, user_id,))
     conn.commit()
-    data
     return jsonify(data)
 
 
